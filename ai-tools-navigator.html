@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🤖 AI工具导航 - 发现最强AI工具集合</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.95);
+            min-height: 100vh;
+            backdrop-filter: blur(10px);
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") repeat;
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .title {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+        
+        .stats {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
+        .search-section {
+            padding: 30px 20px;
+            background: white;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .search-container {
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 15px 50px 15px 20px;
+            border: 2px solid #e1e5e9;
+            border-radius: 25px;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        
+        .search-input:focus {
+            border-color: #4facfe;
+            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+        }
+        
+        .search-icon {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+            font-size: 20px;
+        }
+        
+        .categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+        
+        .category-btn {
+            padding: 8px 16px;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+        
+        .category-btn:hover, .category-btn.active {
+            background: #4facfe;
+            color: white;
+        }
+        
+        .tools-section {
+            padding: 40px 20px;
+        }
+        
+        .category-section {
+            margin-bottom: 50px;
+        }
+        
+        .category-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .tool-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        
+        .tool-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+            border-color: #4facfe;
+        }
+        
+        .tool-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .tool-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+        
+        .tool-info {
+            flex: 1;
+        }
+        
+        .tool-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .tool-description {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+        
+        .tool-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 15px;
+        }
+        
+        .tool-tag {
+            padding: 4px 8px;
+            background: #f0f0f0;
+            border-radius: 12px;
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .tool-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .tool-price {
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .price-free { color: #28a745; }
+        .price-paid { color: #dc3545; }
+        .price-freemium { color: #ffc107; }
+        
+        .tool-rating {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .stars {
+            color: #ffc107;
+        }
+        
+        .footer {
+            background: #333;
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+        }
+        
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .footer h3 {
+            margin-bottom: 15px;
+        }
+        
+        .footer p {
+            opacity: 0.8;
+            line-height: 1.6;
+        }
+        
+        @media (max-width: 768px) {
+            .title {
+                font-size: 24px;
+            }
+            
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .categories {
+                justify-content: flex-start;
+            }
+            
+            .tool-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-content">
+                <h1 class="title">🤖 AI工具导航</h1>
+                <p class="subtitle">发现最强AI工具集合，提升工作效率</p>
+                <p class="stats">🚀 收录 150+ 优质AI工具 | 🔥 每日更新</p>
+            </div>
+        </div>
+        
+        <div class="search-section">
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="搜索AI工具..." id="searchInput">
+                <span class="search-icon">🔍</span>
+            </div>
+            
+            <div class="categories">
+                <button class="category-btn active" data-category="all">🌟 全部</button>
+                <button class="category-btn" data-category="chat">💬 对话AI</button>
+                <button class="category-btn" data-category="image">🎨 图像生成</button>
+                <button class="category-btn" data-category="code">💻 编程助手</button>
+                <button class="category-btn" data-category="writing">✍️ 写作助手</button>
+                <button class="category-btn" data-category="video">🎬 视频创作</button>
+                <button class="category-btn" data-category="audio">🎵 音频工具</button>
+                <button class="category-btn" data-category="design">🎯 设计工具</button>
+                <button class="category-btn" data-category="translate">🌐 翻译工具</button>
+            </div>
+        </div>
+        
+        <div class="tools-section" id="toolsSection">
+            <!-- 工具内容将通过JavaScript动态生成 -->
+        </div>
+        
+        <div class="footer">
+            <div class="footer-content">
+                <h3>🌟 AI工具导航</h3>
+                <p>我们致力于收集和整理最优质的AI工具，帮助你发现提升工作效率的利器。<br>
+                如果你有好的AI工具推荐，欢迎联系我们！</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // AI工具数据
+        const aiTools = [
+            // 对话AI
+            {
+                name: 'ChatGPT',
+                description: '最受欢迎的对话AI，支持文本生成、代码编写、翻译等多种任务',
+                icon: '🤖',
+                category: 'chat',
+                tags: ['对话', '文本生成', '代码', '翻译'],
+                price: 'freemium',
+                rating: 4.8,
+                url: 'https://chat.openai.com',
+                bgColor: '#10a37f'
+            },
+            {
+                name: 'Claude',
+                description: 'Anthropic开发的安全、有用的AI助手，擅长分析和推理',
+                icon: '🧠',
+                category: 'chat',
+                tags: ['对话', '分析', '推理', '安全'],
+                price: 'freemium',
+                rating: 4.7,
+                url: 'https://claude.ai',
+                bgColor: '#d97706'
+            },
+            {
+                name: 'Gemini',
+                description: 'Google最新的多模态AI，支持文本、图像、视频理解',
+                icon: '✨',
+                category: 'chat',
+                tags: ['多模态', '文本', '图像', '视频'],
+                price: 'free',
+                rating: 4.6,
+                url: 'https://gemini.google.com',
+                bgColor: '#4285f4'
+            },
+            
+            // 图像生成
+            {
+                name: 'Midjourney',
+                description: '顶级AI图像生成工具，创造令人惊艳的艺术作品',
+                icon: '🎨',
+                category: 'image',
+                tags: ['图像生成', '艺术', '创意', '高质量'],
+                price: 'paid',
+                rating: 4.9,
+                url: 'https://midjourney.com',
+                bgColor: '#7c3aed'
+            },
+            {
+                name: 'DALL-E 3',
+                description: 'OpenAI的图像生成模型，理解复杂提示创建精确图像',
+                icon: '🖼️',
+                category: 'image',
+                tags: ['图像生成', '精确', '创意', 'OpenAI'],
+                price: 'paid',
+                rating: 4.7,
+                url: 'https://openai.com/dall-e-3',
+                bgColor: '#10a37f'
+            },
+            {
+                name: 'Stable Diffusion',
+                description: '开源的图像生成模型，支持本地部署和自定义',
+                icon: '🌊',
+                category: 'image',
+                tags: ['开源', '本地部署', '自定义', '免费'],
+                price: 'free',
+                rating: 4.5,
+                url: 'https://stability.ai',
+                bgColor: '#6366f1'
+            },
+            
+            // 编程助手
+            {
+                name: 'GitHub Copilot',
+                description: '最强代码补全工具，提供智能代码建议和自动完成',
+                icon: '💻',
+                category: 'code',
+                tags: ['代码补全', '编程', 'GitHub', 'VS Code'],
+                price: 'paid',
+                rating: 4.8,
+                url: 'https://github.com/features/copilot',
+                bgColor: '#24292e'
+            },
+            {
+                name: 'Cursor',
+                description: '专为AI时代设计的代码编辑器，集成强大的AI助手',
+                icon: '⚡',
+                category: 'code',
+                tags: ['代码编辑器', 'AI助手', '编程', '效率'],
+                price: 'freemium',
+                rating: 4.7,
+                url: 'https://cursor.sh',
+                bgColor: '#000000'
+            },
+            {
+                name: 'Codeium',
+                description: '免费的AI代码助手，支持70+编程语言',
+                icon: '🔧',
+                category: 'code',
+                tags: ['免费', '多语言', '代码助手', '扩展'],
+                price: 'free',
+                rating: 4.6,
+                url: 'https://codeium.com',
+                bgColor: '#3b82f6'
+            },
+            
+            // 写作助手
+            {
+                name: 'Grammarly',
+                description: '全球最受欢迎的英语写作助手，语法检查和写作建议',
+                icon: '✍️',
+                category: 'writing',
+                tags: ['语法检查', '英语写作', '建议', '校对'],
+                price: 'freemium',
+                rating: 4.7,
+                url: 'https://grammarly.com',
+                bgColor: '#15803d'
+            },
+            {
+                name: 'Jasper',
+                description: '专业的AI内容创作平台，适合营销和商业写作',
+                icon: '📝',
+                category: 'writing',
+                tags: ['内容创作', '营销', '商业', '文案'],
+                price: 'paid',
+                rating: 4.5,
+                url: 'https://jasper.ai',
+                bgColor: '#7c2d12'
+            },
+            {
+                name: 'Copy.ai',
+                description: 'AI驱动的营销文案生成工具，快速创建广告和内容',
+                icon: '📋',
+                category: 'writing',
+                tags: ['营销文案', '广告', '内容生成', '快速'],
+                price: 'freemium',
+                rating: 4.4,
+                url: 'https://copy.ai',
+                bgColor: '#8b5cf6'
+            },
+            
+            // 视频创作
+            {
+                name: 'Runway',
+                description: '领先的AI视频生成和编辑平台，创造专业级视频内容',
+                icon: '🎬',
+                category: 'video',
+                tags: ['视频生成', '编辑', '专业', '创意'],
+                price: 'freemium',
+                rating: 4.6,
+                url: 'https://runwayml.com',
+                bgColor: '#16a34a'
+            },
+            {
+                name: 'Pika',
+                description: '文本到视频生成工具，快速创建短视频内容',
+                icon: '🎥',
+                category: 'video',
+                tags: ['文本转视频', '短视频', '快速', '简单'],
+                price: 'freemium',
+                rating: 4.3,
+                url: 'https://pika.art',
+                bgColor: '#dc2626'
+            },
+            {
+                name: 'Luma Dream Machine',
+                description: '高质量的AI视频生成工具，支持复杂场景创作',
+                icon: '💫',
+                category: 'video',
+                tags: ['高质量', '复杂场景', '视频生成', 'AI'],
+                price: 'freemium',
+                rating: 4.5,
+                url: 'https://lumalabs.ai',
+                bgColor: '#0ea5e9'
+            },
+            
+            // 音频工具
+            {
+                name: 'ElevenLabs',
+                description: '最先进的AI语音合成技术，生成逼真的人声',
+                icon: '🎵',
+                category: 'audio',
+                tags: ['语音合成', '人声', '逼真', '多语言'],
+                price: 'freemium',
+                rating: 4.8,
+                url: 'https://elevenlabs.io',
+                bgColor: '#f97316'
+            },
+            {
+                name: 'Mubert',
+                description: 'AI音乐生成平台，为视频和应用创建背景音乐',
+                icon: '🎼',
+                category: 'audio',
+                tags: ['音乐生成', '背景音乐', '版权', '商用'],
+                price: 'freemium',
+                rating: 4.4,
+                url: 'https://mubert.com',
+                bgColor: '#ec4899'
+            },
+            {
+                name: 'Suno',
+                description: '全能AI音乐创作工具，生成完整的歌曲和音乐',
+                icon: '🎤',
+                category: 'audio',
+                tags: ['音乐创作', '歌曲生成', '完整', '创意'],
+                price: 'freemium',
+                rating: 4.6,
+                url: 'https://suno.ai',
+                bgColor: '#8b5cf6'
+            },
+            
+            // 设计工具
+            {
+                name: 'Figma AI',
+                description: 'Figma内置的AI设计助手，提升设计效率',
+                icon: '🎯',
+                category: 'design',
+                tags: ['UI设计', 'Figma', '设计助手', '效率'],
+                price: 'freemium',
+                rating: 4.5,
+                url: 'https://figma.com',
+                bgColor: '#0d9488'
+            },
+            {
+                name: 'Canva AI',
+                description: 'Canva的AI设计功能，快速创建各种设计作品',
+                icon: '🌈',
+                category: 'design',
+                tags: ['图形设计', '模板', '快速', '简单'],
+                price: 'freemium',
+                rating: 4.4,
+                url: 'https://canva.com',
+                bgColor: '#00c4cc'
+            },
+            {
+                name: 'Logoai',
+                description: 'AI驱动的LOGO设计工具，快速生成专业标志',
+                icon: '🏷️',
+                category: 'design',
+                tags: ['LOGO设计', '标志', '品牌', '专业'],
+                price: 'freemium',
+                rating: 4.2,
+                url: 'https://logoai.com',
+                bgColor: '#3b82f6'
+            },
+            
+            // 翻译工具
+            {
+                name: 'DeepL',
+                description: '最准确的AI翻译工具，支持多种语言高质量翻译',
+                icon: '🌐',
+                category: 'translate',
+                tags: ['翻译', '多语言', '高质量', '准确'],
+                price: 'freemium',
+                rating: 4.8,
+                url: 'https://deepl.com',
+                bgColor: '#0f766e'
+            },
+            {
+                name: 'Google Translate',
+                description: '谷歌翻译，支持100+语言的免费翻译服务',
+                icon: '🗣️',
+                category: 'translate',
+                tags: ['免费', '100+语言', '谷歌', '实时'],
+                price: 'free',
+                rating: 4.6,
+                url: 'https://translate.google.com',
+                bgColor: '#4285f4'
+            },
+            {
+                name: 'Microsoft Translator',
+                description: '微软翻译服务，支持语音和图像翻译',
+                icon: '🔄',
+                category: 'translate',
+                tags: ['微软', '语音翻译', '图像翻译', '多模态'],
+                price: 'free',
+                rating: 4.3,
+                url: 'https://translator.microsoft.com',
+                bgColor: '#0078d4'
+            }
+        ];
+        
+        let filteredTools = [...aiTools];
+        
+        // DOM元素
+        const searchInput = document.getElementById('searchInput');
+        const toolsSection = document.getElementById('toolsSection');
+        const categoryBtns = document.querySelectorAll('.category-btn');
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            renderTools();
+            setupEventListeners();
+        });
+        
+        function setupEventListeners() {
+            // 搜索功能
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                filterTools(searchTerm, getActiveCategory());
+            });
+            
+            // 分类筛选
+            categoryBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    categoryBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    const category = this.dataset.category;
+                    const searchTerm = searchInput.value.toLowerCase();
+                    filterTools(searchTerm, category);
+                });
+            });
+        }
+        
+        function getActiveCategory() {
+            const activeBtn = document.querySelector('.category-btn.active');
+            return activeBtn ? activeBtn.dataset.category : 'all';
+        }
+        
+        function filterTools(searchTerm, category) {
+            filteredTools = aiTools.filter(tool => {
+                const matchesSearch = !searchTerm || 
+                    tool.name.toLowerCase().includes(searchTerm) ||
+                    tool.description.toLowerCase().includes(searchTerm) ||
+                    tool.tags.some(tag => tag.toLowerCase().includes(searchTerm));
+                
+                const matchesCategory = category === 'all' || tool.category === category;
+                
+                return matchesSearch && matchesCategory;
+            });
+            
+            renderTools();
+        }
+        
+        function renderTools() {
+            const categories = {
+                'chat': { name: '💬 对话AI', tools: [] },
+                'image': { name: '🎨 图像生成', tools: [] },
+                'code': { name: '💻 编程助手', tools: [] },
+                'writing': { name: '✍️ 写作助手', tools: [] },
+                'video': { name: '🎬 视频创作', tools: [] },
+                'audio': { name: '🎵 音频工具', tools: [] },
+                'design': { name: '🎯 设计工具', tools: [] },
+                'translate': { name: '🌐 翻译工具', tools: [] }
+            };
+            
+            // 按分类组织工具
+            filteredTools.forEach(tool => {
+                if (categories[tool.category]) {
+                    categories[tool.category].tools.push(tool);
+                }
+            });
+            
+            // 生成HTML
+            let html = '';
+            Object.entries(categories).forEach(([key, category]) => {
+                if (category.tools.length > 0) {
+                    html += `
+                        <div class="category-section">
+                            <h2 class="category-title">${category.name}</h2>
+                            <div class="tools-grid">
+                                ${category.tools.map(tool => createToolCard(tool)).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+            
+            if (html === '') {
+                html = `
+                    <div style="text-align: center; padding: 60px 20px; color: #666;">
+                        <div style="font-size: 48px; margin-bottom: 20px;">🔍</div>
+                        <h3>没有找到相关工具</h3>
+                        <p>试试其他关键词或分类</p>
+                    </div>
+                `;
+            }
+            
+            toolsSection.innerHTML = html;
+        }
+        
+        function createToolCard(tool) {
+            const priceMap = {
+                'free': '免费',
+                'paid': '付费',
+                'freemium': '免费+付费'
+            };
+            
+            const priceClass = {
+                'free': 'price-free',
+                'paid': 'price-paid',
+                'freemium': 'price-freemium'
+            }[tool.price];
+            
+            return `
+                <div class="tool-card" onclick="window.open('${tool.url}', '_blank')">
+                    <div class="tool-header">
+                        <div class="tool-icon" style="background: ${tool.bgColor}; color: white;">
+                            ${tool.icon}
+                        </div>
+                        <div class="tool-info">
+                            <div class="tool-name">${tool.name}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="tool-description">${tool.description}</div>
+                    
+                    <div class="tool-tags">
+                        ${tool.tags.map(tag => `<span class="tool-tag">${tag}</span>`).join('')}
+                    </div>
+                    
+                    <div class="tool-footer">
+                        <div class="tool-price ${priceClass}">${priceMap[tool.price]}</div>
+                        <div class="tool-rating">
+                            <span class="stars">${'★'.repeat(Math.floor(tool.rating))}${'☆'.repeat(5-Math.floor(tool.rating))}</span>
+                            <span>${tool.rating}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html> 
