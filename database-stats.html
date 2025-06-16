@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>字库统计信息</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .title {
+            color: #D32F2F;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .stats-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 8px;
+        }
+        
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .element-stats {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .element-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .element-name {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .element-count {
+            font-size: 20px;
+            color: #D32F2F;
+        }
+        
+        .character-list {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .character-item {
+            display: inline-block;
+            margin: 5px;
+            padding: 8px 12px;
+            background: white;
+            border-radius: 5px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            font-size: 14px;
+        }
+        
+        .char {
+            font-weight: bold;
+            color: #D32F2F;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">🏮 宝宝起名字库统计信息</h1>
+        
+        <div class="stats-card">
+            <h3>字库概况</h3>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number" id="totalCount">0</div>
+                    <div class="stat-label">总字符数</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="maleCount">0</div>
+                    <div class="stat-label">男宝专用</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="femaleCount">0</div>
+                    <div class="stat-label">女宝专用</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="bothCount">0</div>
+                    <div class="stat-label">男女通用</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="element-stats">
+            <div class="element-card">
+                <div class="element-name">金</div>
+                <div class="element-count" id="goldCount">0</div>
+            </div>
+            <div class="element-card">
+                <div class="element-name">木</div>
+                <div class="element-count" id="woodCount">0</div>
+            </div>
+            <div class="element-card">
+                <div class="element-name">水</div>
+                <div class="element-count" id="waterCount">0</div>
+            </div>
+            <div class="element-card">
+                <div class="element-name">火</div>
+                <div class="element-count" id="fireCount">0</div>
+            </div>
+            <div class="element-card">
+                <div class="element-name">土</div>
+                <div class="element-count" id="earthCount">0</div>
+            </div>
+        </div>
+        
+        <div class="character-list">
+            <h4>字符预览（前50个）：</h4>
+            <div id="characterPreview"></div>
+        </div>
+    </div>
+
+    <!-- 引入字库数据 -->
+    <script src="nameDatabase.js"></script>
+    <script src="expandDatabase.js"></script>
+    
+    <script>
+        // 等待字库加载完成后显示统计信息
+        function displayStats() {
+            if (typeof NAME_DATABASE === 'undefined' || NAME_DATABASE.length === 0) {
+                setTimeout(displayStats, 100);
+                return;
+            }
+            
+            // 统计总数
+            document.getElementById('totalCount').textContent = NAME_DATABASE.length;
+            
+            // 统计性别分布
+            let maleCount = 0;
+            let femaleCount = 0;
+            let bothCount = 0;
+            
+            // 统计五行分布
+            const elementCounts = { '金': 0, '木': 0, '水': 0, '火': 0, '土': 0 };
+            
+            NAME_DATABASE.forEach(char => {
+                // 性别统计
+                if (char.gender.includes('male') && char.gender.includes('female')) {
+                    bothCount++;
+                } else if (char.gender.includes('male')) {
+                    maleCount++;
+                } else if (char.gender.includes('female')) {
+                    femaleCount++;
+                } else if (char.gender.includes('both')) {
+                    bothCount++;
+                }
+                
+                // 五行统计
+                if (elementCounts.hasOwnProperty(char.element)) {
+                    elementCounts[char.element]++;
+                }
+            });
+            
+            document.getElementById('maleCount').textContent = maleCount;
+            document.getElementById('femaleCount').textContent = femaleCount;
+            document.getElementById('bothCount').textContent = bothCount;
+            
+            document.getElementById('goldCount').textContent = elementCounts['金'];
+            document.getElementById('woodCount').textContent = elementCounts['木'];
+            document.getElementById('waterCount').textContent = elementCounts['水'];
+            document.getElementById('fireCount').textContent = elementCounts['火'];
+            document.getElementById('earthCount').textContent = elementCounts['土'];
+            
+            // 显示字符预览
+            const preview = document.getElementById('characterPreview');
+            const previewChars = NAME_DATABASE.slice(0, 50);
+            preview.innerHTML = previewChars.map(char => 
+                `<span class="character-item">
+                    <span class="char">${char.char}</span>
+                    <span>${char.element}</span>
+                </span>`
+            ).join('');
+        }
+        
+        // 页面加载完成后显示统计信息
+        document.addEventListener('DOMContentLoaded', displayStats);
+    </script>
+</body>
+</html> 

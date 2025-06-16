@@ -383,7 +383,7 @@
         </div>
         
         <!-- 分析页面 -->
-        <div id="loadingSection" class="loading-section">
+        <div id="loadingSection" class="loading-section hidden">
             <div class="loading-icon"></div>
             <div class="loading-text" id="loadingText">🔮 正在为您的宝宝分析...</div>
             <div class="loading-progress">
@@ -392,7 +392,7 @@
         </div>
         
         <!-- 结果页面 -->
-        <div id="resultSection" class="result-section">
+        <div id="resultSection" class="result-section hidden">
             <div class="bazi-card">
                 <div class="bazi-title">📅 宝宝命理信息</div>
                 <div class="bazi-info" id="baziInfo">
@@ -418,6 +418,9 @@
         </div>
     </div>
 
+    <!-- 引入字库数据 -->
+    <script src="nameDatabase.js"></script>
+    <script src="expandDatabase.js"></script>
     <script>
         // 全局变量
         let selectedGender = '';
@@ -830,70 +833,8 @@
         
         // 获取字库数据
         function getNameDatabase() {
-            return [
-                // 金字旁的字
-                { char: '鑫', element: '金', meaning: '财富兴盛', strokes: 24, gender: ['male', 'both'] },
-                { char: '钰', element: '金', meaning: '珍宝美玉', strokes: 13, gender: ['both'] },
-                { char: '铭', element: '金', meaning: '铭记在心', strokes: 14, gender: ['male'] },
-                { char: '锐', element: '金', meaning: '锐意进取', strokes: 15, gender: ['male'] },
-                { char: '钢', element: '金', meaning: '坚强刚毅', strokes: 16, gender: ['male'] },
-                { char: '银', element: '金', meaning: '珍贵纯洁', strokes: 14, gender: ['both'] },
-                { char: '锦', element: '金', meaning: '前程似锦', strokes: 16, gender: ['both'] },
-                
-                // 木字旁的字  
-                { char: '林', element: '木', meaning: '茂林修竹', strokes: 8, gender: ['both'] },
-                { char: '森', element: '木', meaning: '森森不息', strokes: 12, gender: ['male'] },
-                { char: '楠', element: '木', meaning: '楠木珍贵', strokes: 13, gender: ['both'] },
-                { char: '柏', element: '木', meaning: '坚贞不渝', strokes: 10, gender: ['male'] },
-                { char: '桂', element: '木', meaning: '蟾宫折桂', strokes: 10, gender: ['both'] },
-                { char: '梓', element: '木', meaning: '梓材良木', strokes: 11, gender: ['both'] },
-                { char: '松', element: '木', meaning: '松柏长青', strokes: 8, gender: ['male'] },
-                
-                // 水字旁的字
-                { char: '海', element: '水', meaning: '海纳百川', strokes: 11, gender: ['male'] },
-                { char: '江', element: '水', meaning: '江山如画', strokes: 7, gender: ['male'] },
-                { char: '涛', element: '水', meaning: '波涛壮阔', strokes: 18, gender: ['male'] },
-                { char: '润', element: '水', meaning: '润泽万物', strokes: 16, gender: ['both'] },
-                { char: '泽', element: '水', meaning: '恩泽深厚', strokes: 17, gender: ['both'] },
-                { char: '清', element: '水', meaning: '清正廉明', strokes: 12, gender: ['both'] },
-                { char: '淼', element: '水', meaning: '水势浩大', strokes: 12, gender: ['both'] },
-                
-                // 火字旁的字
-                { char: '炎', element: '火', meaning: '炎黄子孙', strokes: 8, gender: ['male'] },
-                { char: '煜', element: '火', meaning: '光彩照人', strokes: 13, gender: ['both'] },
-                { char: '烨', element: '火', meaning: '烨烨生辉', strokes: 16, gender: ['both'] },
-                { char: '灿', element: '火', meaning: '灿烂辉煌', strokes: 17, gender: ['both'] },
-                { char: '晖', element: '火', meaning: '阳光普照', strokes: 13, gender: ['both'] },
-                { char: '焱', element: '火', meaning: '火焰升腾', strokes: 12, gender: ['male'] },
-                { char: '烁', element: '火', meaning: '光芒闪烁', strokes: 19, gender: ['both'] },
-                
-                // 土字旁的字
-                { char: '坤', element: '土', meaning: '大地载物', strokes: 8, gender: ['male'] },
-                { char: '圳', element: '土', meaning: '深圳特区', strokes: 6, gender: ['both'] },
-                { char: '城', element: '土', meaning: '城池坚固', strokes: 10, gender: ['both'] },
-                { char: '培', element: '土', meaning: '培育成才', strokes: 11, gender: ['both'] },
-                { char: '堃', element: '土', meaning: '厚德载物', strokes: 11, gender: ['male'] },
-                { char: '垚', element: '土', meaning: '山高土厚', strokes: 9, gender: ['both'] },
-                { char: '均', element: '土', meaning: '均衡和谐', strokes: 7, gender: ['both'] },
-                
-                // 通用好字
-                { char: '轩', element: '土', meaning: '气宇轩昂', strokes: 10, gender: ['male'] },
-                { char: '睿', element: '金', meaning: '聪明睿智', strokes: 14, gender: ['both'] },
-                { char: '凯', element: '木', meaning: '胜利凯旋', strokes: 12, gender: ['male'] },
-                { char: '诗', element: '金', meaning: '诗情画意', strokes: 13, gender: ['female'] },
-                { char: '涵', element: '水', meaning: '包容涵养', strokes: 12, gender: ['both'] },
-                { char: '雨', element: '水', meaning: '甘露降临', strokes: 8, gender: ['both'] },
-                { char: '萱', element: '木', meaning: '忘忧草花', strokes: 15, gender: ['female'] },
-                { char: '悦', element: '金', meaning: '快乐愉悦', strokes: 11, gender: ['both'] },
-                { char: '心', element: '金', meaning: '善良纯真', strokes: 4, gender: ['both'] },
-                { char: '雅', element: '木', meaning: '高雅脱俗', strokes: 12, gender: ['female'] },
-                { char: '琪', element: '木', meaning: '美玉珍贵', strokes: 13, gender: ['female'] },
-                { char: '瑶', element: '火', meaning: '美玉无瑕', strokes: 15, gender: ['female'] },
-                { char: '慧', element: '水', meaning: '聪慧过人', strokes: 15, gender: ['female'] },
-                { char: '宇', element: '土', meaning: '宇宙广阔', strokes: 6, gender: ['male'] },
-                { char: '辰', element: '土', meaning: '星辰大海', strokes: 7, gender: ['both'] },
-                { char: '晨', element: '火', meaning: '晨光熹微', strokes: 11, gender: ['both'] }
-            ];
+            // 使用外部字库文件中的数据
+            return typeof NAME_DATABASE !== 'undefined' ? NAME_DATABASE : [];
         }
         
         // 显示结果
