@@ -339,6 +339,10 @@
         
         .hidden {
             display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            position: absolute !important;
+            left: -9999px !important;
         }
     </style>
 </head>
@@ -428,6 +432,9 @@
         
         // 初始化
         document.addEventListener('DOMContentLoaded', function() {
+            // 确保页面状态正确 - 只显示表单页面
+            showSection('formSection');
+            
             initForm();
             
             // 设置默认日期为今天
@@ -902,17 +909,28 @@
         function showSection(sectionId) {
             console.log('切换到页面:', sectionId);
             try {
-                const formSection = document.getElementById('formSection');
-                const loadingSection = document.getElementById('loadingSection');
-                const resultSection = document.getElementById('resultSection');
+                const sections = ['formSection', 'loadingSection', 'resultSection'];
                 
-                if (formSection) formSection.classList.add('hidden');
-                if (loadingSection) loadingSection.classList.add('hidden');
-                if (resultSection) resultSection.classList.add('hidden');
+                // 隐藏所有页面
+                sections.forEach(id => {
+                    const element = document.getElementById(id);
+                    if (element) {
+                        element.classList.add('hidden');
+                        element.style.display = 'none';
+                        element.style.visibility = 'hidden';
+                        element.style.opacity = '0';
+                    }
+                });
                 
+                // 显示目标页面
                 const targetSection = document.getElementById(sectionId);
                 if (targetSection) {
                     targetSection.classList.remove('hidden');
+                    targetSection.style.display = 'block';
+                    targetSection.style.visibility = 'visible';
+                    targetSection.style.opacity = '1';
+                    targetSection.style.position = 'relative';
+                    targetSection.style.left = 'auto';
                     console.log('成功显示页面:', sectionId);
                 } else {
                     console.error('找不到目标页面:', sectionId);
