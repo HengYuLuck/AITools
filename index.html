@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>宝宝智能起名神器 - AI科学起好名</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 414px;
+            margin: 0 auto;
+            background: #fff;
+            min-height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #D32F2F 0%, #FF6B6B 100%);
+            color: white;
+            text-align: center;
+            padding: 40px 20px 30px;
+            position: relative;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") repeat;
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        
+        .subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 15px;
+        }
+        
+        .stats {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+        
+        .form-section {
+            padding: 30px 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-label {
+            display: block;
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 12px;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #D32F2F;
+            box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.1);
+        }
+        
+        .gender-group {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .gender-option {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        .gender-option.active {
+            border-color: #D32F2F;
+            background: #D32F2F;
+            color: white;
+        }
+        
+        .datetime-group {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .datetime-input {
+            flex: 1;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #D32F2F 0%, #FF6B6B 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(211, 47, 47, 0.3);
+        }
+        
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .loading-section {
+            text-align: center;
+            padding: 60px 20px;
+        }
+        
+        .loading-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 30px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #D32F2F;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .loading-progress {
+            width: 200px;
+            height: 6px;
+            background: #f0f0f0;
+            border-radius: 3px;
+            margin: 20px auto;
+            overflow: hidden;
+        }
+        
+        .loading-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #D32F2F, #FF6B6B);
+            border-radius: 3px;
+            animation: progress 3s ease-in-out;
+        }
+        
+        @keyframes progress {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+        
+        .result-section {
+            padding: 20px;
+        }
+        
+        .bazi-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .bazi-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        
+        .bazi-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            font-size: 14px;
+        }
+        
+        .wuxing-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .wuxing-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .wuxing-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .wuxing-name {
+            font-weight: 600;
+        }
+        
+        .wuxing-stars {
+            color: #FFD700;
+        }
+        
+        .name-card {
+            background: white;
+            border: 2px solid #e1e5e9;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .name-card.best {
+            border-color: #D32F2F;
+            background: linear-gradient(135deg, #fff5f5 0%, #ffeaea 100%);
+        }
+        
+        .name-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .name-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: #D32F2F;
+        }
+        
+        .name-score {
+            font-size: 18px;
+            font-weight: bold;
+            color: #FF6B6B;
+        }
+        
+        .name-stars {
+            color: #FFD700;
+            font-size: 18px;
+            margin: 5px 0;
+        }
+        
+        .name-meaning {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+        
+        .name-wuxing {
+            font-size: 13px;
+            color: #888;
+        }
+        
+        .share-section {
+            padding: 20px;
+            text-align: center;
+            border-top: 1px solid #eee;
+        }
+        
+        .share-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+        
+        .retry-btn {
+            width: 100%;
+            padding: 15px;
+            background: transparent;
+            color: #D32F2F;
+            border: 2px solid #D32F2F;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 首页表单 -->
+        <div id="formSection" class="form-page">
+            <div class="header">
+                <div class="header-content">
+                    <h1 class="title">🏮 宝宝智能起名神器 🏮</h1>
+                    <p class="subtitle">传承千年命理智慧，AI科学起好名</p>
+                    <p class="stats">💫 已为 100万+ 宝宝起名成功</p>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <form id="namingForm">
+                    <div class="form-group">
+                        <label class="form-label">👶 宝宝姓氏</label>
+                        <input type="text" class="form-input" id="surname" placeholder="请输入姓氏，如：张" maxlength="2" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">👦👧 宝宝性别</label>
+                        <div class="gender-group">
+                            <div class="gender-option" data-gender="male">👦 男宝</div>
+                            <div class="gender-option" data-gender="female">👧 女宝</div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">📅 出生日期</label>
+                        <div class="datetime-group">
+                            <input type="date" class="form-input datetime-input" id="birthDate" required>
+                            <input type="time" class="form-input datetime-input" id="birthTime" required>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">🎯 立即免费起名</button>
+                </form>
+            </div>
+        </div>
+        
+        <!-- 分析页面 -->
+        <div id="loadingSection" class="loading-section">
+            <div class="loading-icon"></div>
+            <div class="loading-text" id="loadingText">🔮 正在为您的宝宝分析...</div>
+            <div class="loading-progress">
+                <div class="loading-bar"></div>
+            </div>
+        </div>
+        
+        <!-- 结果页面 -->
+        <div id="resultSection" class="result-section">
+            <div class="bazi-card">
+                <div class="bazi-title">📅 宝宝命理信息</div>
+                <div class="bazi-info" id="baziInfo">
+                    <!-- 八字信息将在这里动态生成 -->
+                </div>
+            </div>
+            
+            <div class="wuxing-card">
+                <div class="wuxing-title">🔥 五行分析</div>
+                <div id="wuxingAnalysis">
+                    <!-- 五行分析将在这里动态生成 -->
+                </div>
+            </div>
+            
+            <div id="nameResults">
+                <!-- 推荐名字将在这里动态生成 -->
+            </div>
+            
+            <div class="share-section">
+                <button class="share-btn" onclick="shareResult()">📤 分享到朋友圈</button>
+                <button class="retry-btn" onclick="resetForm()">🔄 再起一个名字</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量
+        let selectedGender = '';
+        let currentResult = null;
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            initForm();
+            
+            // 设置默认日期为今天
+            const today = new Date();
+            document.getElementById('birthDate').value = today.toISOString().split('T')[0];
+            document.getElementById('birthTime').value = '12:00';
+        });
+        
+        // 初始化表单
+        function initForm() {
+            // 性别选择
+            document.querySelectorAll('.gender-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    document.querySelectorAll('.gender-option').forEach(opt => opt.classList.remove('active'));
+                    this.classList.add('active');
+                    selectedGender = this.dataset.gender;
+                });
+            });
+            
+            // 表单提交
+            document.getElementById('namingForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                if (validateForm()) {
+                    startNaming();
+                }
+            });
+        }
+        
+        // 表单验证
+        function validateForm() {
+            const surname = document.getElementById('surname').value.trim();
+            const birthDate = document.getElementById('birthDate').value;
+            const birthTime = document.getElementById('birthTime').value;
+            
+            if (!surname) {
+                alert('请输入宝宝姓氏');
+                return false;
+            }
+            
+            if (!selectedGender) {
+                alert('请选择宝宝性别');
+                return false;
+            }
+            
+            if (!birthDate || !birthTime) {
+                alert('请选择出生日期和时间');
+                return false;
+            }
+            
+            return true;
+        }
+        
+        // 开始起名分析
+        function startNaming() {
+            console.log('开始起名分析...');
+            try {
+                showSection('loadingSection');
+                
+                const loadingTexts = [
+                    '🔮 正在计算生辰八字...',
+                    '🌟 分析五行缺失中...',
+                    '💫 匹配最佳用字中...',
+                    '🎊 生成专属好名中...'
+                ];
+                
+                let index = 0;
+                const interval = setInterval(() => {
+                    try {
+                        if (index < loadingTexts.length) {
+                            const loadingTextElement = document.getElementById('loadingText');
+                            if (loadingTextElement) {
+                                loadingTextElement.textContent = loadingTexts[index];
+                            }
+                            index++;
+                        } else {
+                            clearInterval(interval);
+                            setTimeout(() => {
+                                generateResult();
+                            }, 500);
+                        }
+                    } catch (error) {
+                        console.error('Loading interval error:', error);
+                        clearInterval(interval);
+                    }
+                }, 800);
+            } catch (error) {
+                console.error('startNaming error:', error);
+                alert('起名过程中出现错误，请重试');
+            }
+        }
+        
+        // 生成起名结果
+        function generateResult() {
+            console.log('生成起名结果...');
+            try {
+                const surname = document.getElementById('surname').value.trim();
+                const birthDate = document.getElementById('birthDate').value;
+                const birthTime = document.getElementById('birthTime').value;
+                const gender = selectedGender;
+                
+                console.log('表单数据:', { surname, birthDate, birthTime, gender });
+                
+                // 模拟计算八字
+                const bazi = calculateBazi(birthDate, birthTime);
+                
+                // 模拟五行分析
+                const wuxing = analyzeWuxing(bazi);
+                
+                // 模拟生成名字
+                const names = generateNames(surname, gender, wuxing);
+                
+                currentResult = {
+                    surname,
+                    gender,
+                    birthDate,
+                    birthTime,
+                    bazi,
+                    wuxing,
+                    names
+                };
+                
+                console.log('生成的结果:', currentResult);
+                displayResult();
+            } catch (error) {
+                console.error('generateResult error:', error);
+                alert('生成结果时出现错误，请重试');
+            }
+        }
+        
+        // 计算八字（真实算法）
+        function calculateBazi(date, time) {
+            const heavenly = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'];
+            const earthly = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'];
+            
+            const birthDate = new Date(date + 'T' + time);
+            const year = birthDate.getFullYear();
+            const month = birthDate.getMonth() + 1;
+            const day = birthDate.getDate();
+            const hour = birthDate.getHours();
+            
+            // 年柱计算（以立春为界）
+            let lunarYear = year;
+            const springStart = getSpringDate(year);
+            if (birthDate < springStart) {
+                lunarYear = year - 1;
+            }
+            
+            const yearSky = heavenly[(lunarYear - 4) % 10];
+            const yearEarth = earthly[(lunarYear - 4) % 12];
+            
+            // 月柱计算（以节气为界）
+            const monthIndex = getSolarMonth(birthDate);
+            const monthSkyIndex = ((lunarYear - 4) % 10) * 2 + monthIndex;
+            const monthSky = heavenly[monthSkyIndex % 10];
+            const monthEarth = earthly[(monthIndex + 2) % 12];
+            
+            // 日柱计算（儒略日算法）
+            const julianDay = getJulianDay(year, month, day);
+            const daySkyIndex = (julianDay - 11) % 10;
+            const dayEarthIndex = (julianDay - 11) % 12;
+            const daySky = heavenly[daySkyIndex];
+            const dayEarth = earthly[dayEarthIndex];
+            
+            // 时柱计算
+            const hourIndex = Math.floor((hour + 1) / 2) % 12;
+            const hourSkyIndex = (daySkyIndex * 2 + hourIndex) % 10;
+            const hourSky = heavenly[hourSkyIndex];
+            const hourEarth = earthly[hourIndex];
+            
+            return {
+                year: yearSky + yearEarth,
+                month: monthSky + monthEarth,
+                day: daySky + dayEarth,
+                hour: hourSky + hourEarth,
+                elements: {
+                    year: getElementFromStem(yearSky),
+                    month: getElementFromStem(monthSky),
+                    day: getElementFromStem(daySky),
+                    hour: getElementFromStem(hourSky)
+                }
+            };
+        }
+        
+        // 获取立春日期
+        function getSpringDate(year) {
+            // 简化计算，实际应用中需要更精确的节气计算
+            return new Date(year, 1, 4); // 大约2月4日
+        }
+        
+        // 获取节气月份
+        function getSolarMonth(date) {
+            const month = date.getMonth();
+            const day = date.getDate();
+            
+            // 简化的节气计算
+            const solarMonths = [11, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+            let solarMonth = solarMonths[month];
+            
+            // 根据具体日期调整（简化版本）
+            if ((month === 0 && day < 6) || (month === 11 && day >= 6)) {
+                solarMonth = month === 0 ? 11 : 0;
+            }
+            
+            return solarMonth;
+        }
+        
+        // 儒略日计算
+        function getJulianDay(year, month, day) {
+            if (month <= 2) {
+                year -= 1;
+                month += 12;
+            }
+            const a = Math.floor(year / 100);
+            const b = 2 - a + Math.floor(a / 4);
+            return Math.floor(365.25 * (year + 4716)) + Math.floor(30.6001 * (month + 1)) + day + b - 1524;
+        }
+        
+        // 从天干获取五行
+        function getElementFromStem(stem) {
+            const stemElements = {
+                '甲': '木', '乙': '木',
+                '丙': '火', '丁': '火',
+                '戊': '土', '己': '土',
+                '庚': '金', '辛': '金',
+                '壬': '水', '癸': '水'
+            };
+            return stemElements[stem] || '木';
+        }
+        
+        // 五行分析（真实算法）
+        function analyzeWuxing(bazi) {
+            // 统计八字中的五行
+            const elements = { '金': 0, '木': 0, '水': 0, '火': 0, '土': 0 };
+            
+            // 从天干分析
+            Object.values(bazi.elements).forEach(element => {
+                elements[element]++;
+            });
+            
+            // 从地支分析（简化版本）
+            const branchElements = {
+                '子': '水', '亥': '水',
+                '寅': '木', '卯': '木',
+                '巳': '火', '午': '火',
+                '申': '金', '酉': '金',
+                '辰': '土', '戌': '土', '丑': '土', '未': '土'
+            };
+            
+            [bazi.year, bazi.month, bazi.day, bazi.hour].forEach(pillar => {
+                const branch = pillar[1];
+                const element = branchElements[branch];
+                if (element) {
+                    elements[element]++;
+                }
+            });
+            
+            // 分析五行强弱
+            const total = Object.values(elements).reduce((sum, count) => sum + count, 0);
+            const lacking = [];
+            const weak = [];
+            const strong = [];
+            
+            Object.entries(elements).forEach(([element, count]) => {
+                const percentage = count / total;
+                if (count === 0) {
+                    lacking.push(element);
+                } else if (percentage < 0.15) {
+                    weak.push(element);
+                } else if (percentage > 0.3) {
+                    strong.push(element);
+                }
+            });
+            
+            // 生成建议
+            let suggestion = '';
+            if (lacking.length > 0) {
+                const needElement = lacking[0];
+                suggestion = `五行缺${lacking.join('、')}，建议选用${needElement}字旁的字，如：${getElementSamples(needElement)}`;
+            } else if (weak.length > 0) {
+                const needElement = weak[0];
+                suggestion = `五行${weak.join('、')}偏弱，建议加强${needElement}字旁的字，如：${getElementSamples(needElement)}`;
+            } else {
+                suggestion = '五行相对平衡，可根据音韵美感选择用字';
+            }
+            
+            return { 
+                elements, 
+                lacking, 
+                weak,
+                strong,
+                suggestion,
+                needElement: lacking.length > 0 ? lacking[0] : (weak.length > 0 ? weak[0] : null)
+            };
+        }
+        
+        // 获取五行用字示例
+        function getElementSamples(element) {
+            const samples = {
+                '金': '鑫、钰、铭、锐、钢',
+                '木': '林、森、楠、柏、桂', 
+                '水': '海、江、涛、润、泽',
+                '火': '炎、煜、烨、灿、晖',
+                '土': '坤、圳、城、培、堃'
+            };
+            return samples[element] || '';
+        }
+        
+        // 生成名字（增强算法）
+        function generateNames(surname, gender, wuxing) {
+            // 获取完整的字库
+            const nameDatabase = getNameDatabase();
+            const targetElement = wuxing.needElement;
+            
+            // 根据性别和五行需求筛选合适的字
+            let candidates = [];
+            
+            if (targetElement) {
+                // 优先选择补五行的字
+                candidates = nameDatabase.filter(char => 
+                    char.element === targetElement && 
+                    char.gender.includes(gender)
+                );
+            }
+            
+            // 如果候选字不够，加入通用好字
+            if (candidates.length < 10) {
+                const generalChars = nameDatabase.filter(char => 
+                    char.gender.includes(gender) || char.gender.includes('both')
+                );
+                candidates = [...candidates, ...generalChars];
+            }
+            
+            // 随机打乱候选字顺序
+            candidates = shuffleArray([...candidates]);
+            
+            // 生成名字组合
+            const nameList = [];
+            const maxAttempts = Math.min(candidates.length * candidates.length, 200); // 限制尝试次数
+            
+            for (let attempt = 0; attempt < maxAttempts && nameList.length < 20; attempt++) {
+                // 随机选择两个不同的字
+                const index1 = Math.floor(Math.random() * candidates.length);
+                let index2 = Math.floor(Math.random() * candidates.length);
+                
+                // 确保不是同一个字
+                if (index1 === index2) {
+                    index2 = (index1 + 1) % candidates.length;
+                }
+                
+                const char1 = candidates[index1];
+                const char2 = candidates[index2];
+                
+                // 避免重复的字符
+                if (char1.char === char2.char) continue;
+                
+                const name = char1.char + char2.char;
+                const fullName = surname + name;
+                
+                // 检查是否已经生成过这个名字
+                if (nameList.some(existing => existing.name === name)) continue;
+                
+                // 计算名字评分
+                const score = calculateNameScore(surname, name, wuxing);
+                
+                // 生成寓意解释
+                const meaning = `${char1.char}（${char1.meaning}）${char2.char}（${char2.meaning}）`;
+                
+                // 分析五行搭配
+                const nameWuxing = char1.element + char2.element;
+                
+                nameList.push({
+                    name,
+                    fullName,
+                    meaning,
+                    score,
+                    wuxing: nameWuxing,
+                    isTop: false,
+                    strokes: char1.strokes + char2.strokes,
+                    phonetics: analyzePhonetics(fullName)
+                });
+            }
+            
+            // 按评分排序
+            nameList.sort((a, b) => b.score - a.score);
+            
+            // 标记最佳名字
+            nameList.forEach((name, index) => {
+                name.isTop = index === 0;
+            });
+            
+            return nameList.slice(0, 5);
+        }
+        
+        // 数组随机打乱函数
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+        
+        // 获取字库数据
+        function getNameDatabase() {
+            return [
+                // 金字旁的字
+                { char: '鑫', element: '金', meaning: '财富兴盛', strokes: 24, gender: ['male', 'both'] },
+                { char: '钰', element: '金', meaning: '珍宝美玉', strokes: 13, gender: ['both'] },
+                { char: '铭', element: '金', meaning: '铭记在心', strokes: 14, gender: ['male'] },
+                { char: '锐', element: '金', meaning: '锐意进取', strokes: 15, gender: ['male'] },
+                { char: '钢', element: '金', meaning: '坚强刚毅', strokes: 16, gender: ['male'] },
+                { char: '银', element: '金', meaning: '珍贵纯洁', strokes: 14, gender: ['both'] },
+                { char: '锦', element: '金', meaning: '前程似锦', strokes: 16, gender: ['both'] },
+                
+                // 木字旁的字  
+                { char: '林', element: '木', meaning: '茂林修竹', strokes: 8, gender: ['both'] },
+                { char: '森', element: '木', meaning: '森森不息', strokes: 12, gender: ['male'] },
+                { char: '楠', element: '木', meaning: '楠木珍贵', strokes: 13, gender: ['both'] },
+                { char: '柏', element: '木', meaning: '坚贞不渝', strokes: 10, gender: ['male'] },
+                { char: '桂', element: '木', meaning: '蟾宫折桂', strokes: 10, gender: ['both'] },
+                { char: '梓', element: '木', meaning: '梓材良木', strokes: 11, gender: ['both'] },
+                { char: '松', element: '木', meaning: '松柏长青', strokes: 8, gender: ['male'] },
+                
+                // 水字旁的字
+                { char: '海', element: '水', meaning: '海纳百川', strokes: 11, gender: ['male'] },
+                { char: '江', element: '水', meaning: '江山如画', strokes: 7, gender: ['male'] },
+                { char: '涛', element: '水', meaning: '波涛壮阔', strokes: 18, gender: ['male'] },
+                { char: '润', element: '水', meaning: '润泽万物', strokes: 16, gender: ['both'] },
+                { char: '泽', element: '水', meaning: '恩泽深厚', strokes: 17, gender: ['both'] },
+                { char: '清', element: '水', meaning: '清正廉明', strokes: 12, gender: ['both'] },
+                { char: '淼', element: '水', meaning: '水势浩大', strokes: 12, gender: ['both'] },
+                
+                // 火字旁的字
+                { char: '炎', element: '火', meaning: '炎黄子孙', strokes: 8, gender: ['male'] },
+                { char: '煜', element: '火', meaning: '光彩照人', strokes: 13, gender: ['both'] },
+                { char: '烨', element: '火', meaning: '烨烨生辉', strokes: 16, gender: ['both'] },
+                { char: '灿', element: '火', meaning: '灿烂辉煌', strokes: 17, gender: ['both'] },
+                { char: '晖', element: '火', meaning: '阳光普照', strokes: 13, gender: ['both'] },
+                { char: '焱', element: '火', meaning: '火焰升腾', strokes: 12, gender: ['male'] },
+                { char: '烁', element: '火', meaning: '光芒闪烁', strokes: 19, gender: ['both'] },
+                
+                // 土字旁的字
+                { char: '坤', element: '土', meaning: '大地载物', strokes: 8, gender: ['male'] },
+                { char: '圳', element: '土', meaning: '深圳特区', strokes: 6, gender: ['both'] },
+                { char: '城', element: '土', meaning: '城池坚固', strokes: 10, gender: ['both'] },
+                { char: '培', element: '土', meaning: '培育成才', strokes: 11, gender: ['both'] },
+                { char: '堃', element: '土', meaning: '厚德载物', strokes: 11, gender: ['male'] },
+                { char: '垚', element: '土', meaning: '山高土厚', strokes: 9, gender: ['both'] },
+                { char: '均', element: '土', meaning: '均衡和谐', strokes: 7, gender: ['both'] },
+                
+                // 通用好字
+                { char: '轩', element: '土', meaning: '气宇轩昂', strokes: 10, gender: ['male'] },
+                { char: '睿', element: '金', meaning: '聪明睿智', strokes: 14, gender: ['both'] },
+                { char: '凯', element: '木', meaning: '胜利凯旋', strokes: 12, gender: ['male'] },
+                { char: '诗', element: '金', meaning: '诗情画意', strokes: 13, gender: ['female'] },
+                { char: '涵', element: '水', meaning: '包容涵养', strokes: 12, gender: ['both'] },
+                { char: '雨', element: '水', meaning: '甘露降临', strokes: 8, gender: ['both'] },
+                { char: '萱', element: '木', meaning: '忘忧草花', strokes: 15, gender: ['female'] },
+                { char: '悦', element: '金', meaning: '快乐愉悦', strokes: 11, gender: ['both'] },
+                { char: '心', element: '金', meaning: '善良纯真', strokes: 4, gender: ['both'] },
+                { char: '雅', element: '木', meaning: '高雅脱俗', strokes: 12, gender: ['female'] },
+                { char: '琪', element: '木', meaning: '美玉珍贵', strokes: 13, gender: ['female'] },
+                { char: '瑶', element: '火', meaning: '美玉无瑕', strokes: 15, gender: ['female'] },
+                { char: '慧', element: '水', meaning: '聪慧过人', strokes: 15, gender: ['female'] },
+                { char: '宇', element: '土', meaning: '宇宙广阔', strokes: 6, gender: ['male'] },
+                { char: '辰', element: '土', meaning: '星辰大海', strokes: 7, gender: ['both'] },
+                { char: '晨', element: '火', meaning: '晨光熹微', strokes: 11, gender: ['both'] }
+            ];
+        }
+        
+        // 显示结果
+        function displayResult() {
+            console.log('开始显示结果...');
+            try {
+                // 显示八字信息
+                const baziInfo = document.getElementById('baziInfo');
+            baziInfo.innerHTML = `
+                <div>出生日期：${currentResult.birthDate}</div>
+                <div>出生时间：${currentResult.birthTime}</div>
+                <div>年柱：${currentResult.bazi.year}</div>
+                <div>月柱：${currentResult.bazi.month}</div>
+                <div>日柱：${currentResult.bazi.day}</div>
+                <div>时柱：${currentResult.bazi.hour}</div>
+            `;
+            
+            // 显示五行分析
+            const wuxingAnalysis = document.getElementById('wuxingAnalysis');
+            let wuxingHtml = '';
+            Object.entries(currentResult.wuxing.elements).forEach(([element, count]) => {
+                const stars = '★'.repeat(count) + '☆'.repeat(4 - count);
+                wuxingHtml += `
+                    <div class="wuxing-item">
+                        <span class="wuxing-name">${element}：</span>
+                        <span class="wuxing-stars">${stars}</span>
+                    </div>
+                `;
+            });
+            wuxingHtml += `<p style="margin-top: 15px; color: #666; font-size: 14px;">${currentResult.wuxing.suggestion}</p>`;
+            wuxingAnalysis.innerHTML = wuxingHtml;
+            
+            // 显示推荐名字
+            const nameResults = document.getElementById('nameResults');
+            let namesHtml = '';
+            currentResult.names.forEach((name, index) => {
+                const stars = '⭐'.repeat(Math.floor(name.score / 20));
+                const complementInfo = currentResult.wuxing.needElement ? `，补${currentResult.wuxing.needElement}强运` : '';
+                
+                namesHtml += `
+                    <div class="name-card ${name.isTop ? 'best' : ''}">
+                        <div class="name-header">
+                            <div class="name-text">【${name.fullName}】</div>
+                            <div class="name-score">${name.score}分</div>
+                        </div>
+                        <div class="name-stars">${stars}</div>
+                        <div class="name-meaning">📖 ${name.meaning}</div>
+                        <div class="name-wuxing">🔥 五行：${name.wuxing}${complementInfo}</div>
+                        <div class="name-wuxing">✍️ 笔画：${name.strokes}画</div>
+                        <div class="name-wuxing">🎵 音韵：${name.phonetics.analysis}</div>
+                    </div>
+                `;
+            });
+            nameResults.innerHTML = namesHtml;
+            
+            showSection('resultSection');
+            console.log('结果显示完成');
+            } catch (error) {
+                console.error('displayResult error:', error);
+                alert('显示结果时出现错误，请重试');
+            }
+        }
+        
+        // 切换显示的页面
+        function showSection(sectionId) {
+            console.log('切换到页面:', sectionId);
+            try {
+                const formSection = document.getElementById('formSection');
+                const loadingSection = document.getElementById('loadingSection');
+                const resultSection = document.getElementById('resultSection');
+                
+                if (formSection) formSection.classList.add('hidden');
+                if (loadingSection) loadingSection.classList.add('hidden');
+                if (resultSection) resultSection.classList.add('hidden');
+                
+                const targetSection = document.getElementById(sectionId);
+                if (targetSection) {
+                    targetSection.classList.remove('hidden');
+                    console.log('成功显示页面:', sectionId);
+                } else {
+                    console.error('找不到目标页面:', sectionId);
+                }
+            } catch (error) {
+                console.error('showSection error:', error);
+            }
+        }
+        
+        // 分享结果
+        function shareResult() {
+            if (!currentResult) return;
+            
+            const shareText = `我给宝宝用AI起了个好名字：${currentResult.names[0].fullName}，综合评分${currentResult.names[0].score}分！\n\n传承千年命理智慧，AI科学起好名\n👶 你也想给宝宝起个好名字吗？`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: '宝宝智能起名神器',
+                    text: shareText,
+                    url: window.location.href
+                });
+            } else {
+                // 复制到剪贴板
+                navigator.clipboard.writeText(shareText + '\n\n' + window.location.href).then(() => {
+                    alert('分享内容已复制到剪贴板，快去朋友圈分享吧！');
+                });
+            }
+        }
+        
+        // 重置表单
+        function resetForm() {
+            document.getElementById('namingForm').reset();
+            document.querySelectorAll('.gender-option').forEach(opt => opt.classList.remove('active'));
+            selectedGender = '';
+            currentResult = null;
+            
+            // 重新设置默认日期
+            const today = new Date();
+            document.getElementById('birthDate').value = today.toISOString().split('T')[0];
+            document.getElementById('birthTime').value = '12:00';
+            
+            showSection('formSection');
+        }
+        
+        // 计算名字评分
+        function calculateNameScore(surname, name, wuxing) {
+            let score = 0;
+            
+            // 1. 五行匹配度 (40分)
+            if (wuxing.needElement) {
+                const nameDatabase = getNameDatabase();
+                const nameChars = name.split('');
+                let matchCount = 0;
+                
+                nameChars.forEach(char => {
+                    const charData = nameDatabase.find(c => c.char === char);
+                    if (charData && charData.element === wuxing.needElement) {
+                        matchCount++;
+                    }
+                });
+                
+                score += (matchCount / nameChars.length) * 40;
+            } else {
+                score += 35; // 五行平衡时给基础分
+            }
+            
+            // 2. 笔画数理 (25分)
+            const strokeScore = calculateStrokeScore(surname, name);
+            score += strokeScore;
+            
+            // 3. 音韵美感 (20分)
+            const phoneticScore = calculatePhoneticScore(surname + name);
+            score += phoneticScore;
+            
+            // 4. 寓意吉祥 (15分)
+            const meaningScore = calculateMeaningScore(name);
+            score += meaningScore;
+            
+            return Math.round(score);
+        }
+        
+        // 计算笔画数理评分
+        function calculateStrokeScore(surname, name) {
+            const nameDatabase = getNameDatabase();
+            const surnameStrokes = getCharStrokes(surname);
+            
+            let totalStrokes = surnameStrokes;
+            name.split('').forEach(char => {
+                const charData = nameDatabase.find(c => c.char === char);
+                totalStrokes += charData ? charData.strokes : 10;
+            });
+            
+            // 根据总笔画数判断吉凶（简化版本）
+            const luckyNumbers = [1, 3, 5, 6, 7, 8, 11, 13, 15, 16, 17, 18, 21, 23, 24, 25, 29, 31, 32, 33, 35, 37, 39, 41, 45, 47, 48, 52, 57, 61, 63, 65, 67, 68, 81];
+            
+            if (luckyNumbers.includes(totalStrokes % 81)) {
+                return 25;
+            } else if (totalStrokes % 81 < 40) {
+                return 15;
+            } else {
+                return 10;
+            }
+        }
+        
+        // 获取单字笔画数
+        function getCharStrokes(char) {
+            const commonStrokes = {
+                '王': 4, '李': 7, '张': 11, '刘': 15, '陈': 16, '杨': 13, '赵': 14, '黄': 12, '周': 8, '吴': 7,
+                '徐': 10, '孙': 6, '胡': 9, '朱': 6, '高': 10, '林': 8, '何': 7, '郭': 15, '马': 10, '罗': 19,
+                '梁': 11, '宋': 7, '郑': 19, '谢': 17, '韩': 17, '唐': 10, '冯': 12, '于': 3, '董': 15, '萧': 18
+            };
+            return commonStrokes[char] || 8; // 默认8画
+        }
+        
+        // 计算音韵评分
+        function calculatePhoneticScore(fullName) {
+            const tones = getTonesPattern(fullName);
+            
+            // 检查声调搭配是否和谐
+            if (tones.length >= 3) {
+                // 避免三个字都是同一声调
+                if (tones[0] === tones[1] && tones[1] === tones[2]) {
+                    return 10;
+                }
+                // 平仄相间比较好听
+                if ((tones[0] !== tones[1]) && (tones[1] !== tones[2])) {
+                    return 20;
+                }
+                return 15;
+            }
+            return 12;
+        }
+        
+        // 获取字的声调（简化版本）
+        function getTonesPattern(name) {
+            const toneMap = {
+                // 一声（阴平）
+                '张': 1, '王': 2, '李': 3, '刘': 2, '陈': 2, '杨': 2, '周': 1, '吴': 2,
+                '鑫': 1, '钰': 4, '林': 2, '海': 3, '炎': 2, '坤': 1,
+                '轩': 1, '睿': 4, '涵': 2, '诗': 1, '雨': 3, '悦': 4
+            };
+            
+            return name.split('').map(char => toneMap[char] || 2);
+        }
+        
+        // 计算寓意评分
+        function calculateMeaningScore(name) {
+            const positiveChars = ['鑫', '钰', '林', '海', '炎', '坤', '轩', '睿', '涵', '诗', '雨', '悦', '雅', '琪', '瑶', '慧', '宇', '辰', '晨'];
+            let score = 0;
+            
+            name.split('').forEach(char => {
+                if (positiveChars.includes(char)) {
+                    score += 7.5;
+                } else {
+                    score += 5;
+                }
+            });
+            
+            return Math.min(score, 15);
+        }
+        
+        // 音韵分析
+        function analyzePhonetics(fullName) {
+            const tones = getTonesPattern(fullName);
+            const toneNames = ['', '平声', '上声', '去声', '入声'];
+            
+            let pattern = tones.map(tone => toneNames[tone] || '平声').join('-');
+            
+            // 判断音韵特点
+            let analysis = '';
+            if (tones.every(tone => tone === tones[0])) {
+                analysis = '声调统一，音韵平稳';
+            } else if (tones[0] !== tones[1] && tones[1] !== tones[2]) {
+                analysis = '平仄相间，朗朗上口';
+            } else {
+                analysis = '音调和谐，悦耳动听';
+            }
+            
+            return { pattern, analysis };
+        }
+    </script>
+</body>
+</html> 
