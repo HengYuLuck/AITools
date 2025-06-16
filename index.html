@@ -288,6 +288,13 @@
             color: #FF6B6B;
         }
         
+        .name-pinyin {
+            font-size: 13px;
+            color: #666;
+            margin: 5px 0;
+            font-style: italic;
+        }
+        
         .name-stars {
             color: #FFD700;
             font-size: 18px;
@@ -748,24 +755,37 @@
             const nameDatabase = getNameDatabase();
             const targetElement = wuxing.needElement;
             
-            // 根据性别和五行需求筛选合适的字
-            let candidates = [];
+            // 根据性别筛选合适的字 - 优化逻辑
+            let primaryCandidates = [];
+            let secondaryCandidates = [];
             
             if (targetElement) {
-                // 优先选择补五行的字
-                candidates = nameDatabase.filter(char => 
+                // 优先选择补五行的字，严格按性别筛选
+                primaryCandidates = nameDatabase.filter(char => 
                     char.element === targetElement && 
-                    char.gender.includes(gender)
+                    (char.gender.includes(gender) || char.gender.includes('both'))
+                );
+                
+                // 其他五行的性别适合字作为次选
+                secondaryCandidates = nameDatabase.filter(char => 
+                    char.element !== targetElement && 
+                    (char.gender.includes(gender) || char.gender.includes('both'))
+                );
+            } else {
+                // 五行平衡时，直接按性别选择
+                primaryCandidates = nameDatabase.filter(char => 
+                    char.gender.includes(gender) || char.gender.includes('both')
                 );
             }
             
-            // 如果候选字不够，加入通用好字
-            if (candidates.length < 10) {
-                const generalChars = nameDatabase.filter(char => 
-                    char.gender.includes(gender) || char.gender.includes('both')
-                );
-                candidates = [...candidates, ...generalChars];
+            // 合并候选字，给五行匹配的字更多权重
+            let candidates = [];
+            // 五行匹配的字重复3次，增加被选中的概率
+            for (let i = 0; i < 3; i++) {
+                candidates = candidates.concat(primaryCandidates);
             }
+            // 其他字只加入1次
+            candidates = candidates.concat(secondaryCandidates);
             
             // 随机打乱候选字顺序
             candidates = shuffleArray([...candidates]);
@@ -796,6 +816,9 @@
                 // 检查是否已经生成过这个名字
                 if (nameList.some(existing => existing.name === name)) continue;
                 
+                // 检查名字组合的和谐度
+                if (!isHarmoniousNameCombination(char1, char2, gender)) continue;
+                
                 // 计算名字评分
                 const score = calculateNameScore(surname, name, wuxing);
                 
@@ -805,6 +828,9 @@
                 // 分析五行搭配
                 const nameWuxing = char1.element + char2.element;
                 
+                // 生成拼音
+                const pinyin = generatePinyin(surname, char1, char2);
+                
                 nameList.push({
                     name,
                     fullName,
@@ -813,7 +839,8 @@
                     wuxing: nameWuxing,
                     isTop: false,
                     strokes: char1.strokes + char2.strokes,
-                    phonetics: analyzePhonetics(fullName)
+                    phonetics: analyzePhonetics(fullName),
+                    pinyin: pinyin
                 });
             }
             
@@ -836,6 +863,75 @@
                 [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
             }
             return newArray;
+        }
+        
+        // 生成拼音函数
+        function generatePinyin(surname, char1, char2) {
+            // 常见姓氏拼音映射
+            const surnameMap = {
+                '张': 'zhāng', '王': 'wáng', '李': 'lǐ', '刘': 'liú', '陈': 'chén', 
+                '杨': 'yáng', '赵': 'zhào', '黄': 'huáng', '周': 'zhōu', '吴': 'wú',
+                '徐': 'xú', '孙': 'sūn', '胡': 'hú', '朱': 'zhū', '高': 'gāo',
+                '林': 'lín', '何': 'hé', '郭': 'guō', '马': 'mǎ', '罗': 'luó',
+                '梁': 'liáng', '宋': 'sòng', '郑': 'zhèng', '谢': 'xiè', '韩': 'hán',
+                '唐': 'táng', '冯': 'féng', '于': 'yú', '董': 'dǒng', '萧': 'xiāo'
+            };
+            
+            const surnamePin = surnameMap[surname] || surname;
+            const char1Pin = char1.pinyin || char1.char;
+            const char2Pin = char2.pinyin || char2.char;
+            
+            return `${surnamePin} ${char1Pin} ${char2Pin}`;
+        }
+        
+        // 检查名字组合和谐度
+        function isHarmoniousNameCombination(char1, char2, gender) {
+            // 避免五行相克的组合
+            const conflictElements = {
+                '金': ['木'],
+                '木': ['土'],
+                '土': ['水'],
+                '水': ['火'],
+                '火': ['金']
+            };
+            
+            if (conflictElements[char1.element] && conflictElements[char1.element].includes(char2.element)) {
+                return false;
+            }
+            
+            // 推荐的美好组合（按性别优化）
+            const harmoniousCombos = {
+                'male': [
+                    // 男生推荐组合：力量、智慧、成功类
+                    ['宇', '轩'], ['浩', '然'], ['俊', '杰'], ['博', '文'], ['志', '强'],
+                    ['铭', '轩'], ['睿', '宇'], ['煜', '辰'], ['峰', '涛'], ['承', '德'],
+                    ['思', '远'], ['明', '轩'], ['锐', '峰'], ['宸', '昊'], ['智', '勇']
+                ],
+                'female': [
+                    // 女生推荐组合：美丽、优雅、智慧类
+                    ['雅', '琳'], ['诗', '涵'], ['婷', '雯'], ['慧', '琪'], ['美', '琳'],
+                    ['思', '雅'], ['梦', '瑶'], ['诗', '婷'], ['雨', '萱'], ['晴', '雪'],
+                    ['颖', '慧'], ['静', '雅'], ['美', '娜'], ['琳', '娜'], ['雅', '欣']
+                ]
+            };
+            
+            const genderCombos = harmoniousCombos[gender] || [];
+            for (const combo of genderCombos) {
+                if ((combo[0] === char1.char && combo[1] === char2.char) ||
+                    (combo[1] === char1.char && combo[0] === char2.char)) {
+                    return true;
+                }
+            }
+            
+            // 检查字符含义搭配是否和谐
+            const negativeKeywords = ['病', '死', '凶', '恶', '衰', '败', '穷', '苦'];
+            for (const keyword of negativeKeywords) {
+                if (char1.meaning.includes(keyword) || char2.meaning.includes(keyword)) {
+                    return false;
+                }
+            }
+            
+            return true;
         }
         
         // 获取字库数据
@@ -887,6 +983,7 @@
                             <div class="name-text">【${name.fullName}】</div>
                             <div class="name-score">${name.score}分</div>
                         </div>
+                        <div class="name-pinyin">📝 拼音：${name.pinyin}</div>
                         <div class="name-stars">${stars}</div>
                         <div class="name-meaning">📖 ${name.meaning}</div>
                         <div class="name-wuxing">🔥 五行：${name.wuxing}${complementInfo}</div>
